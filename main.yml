@@ -2,7 +2,6 @@
 - name: create json 
   hosts: localhost
   vars:
-  # server_list: ['10.171.170.38']
    id_list: []
    ipaddress: []
    oskernel: []

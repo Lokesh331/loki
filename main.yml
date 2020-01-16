@@ -34,6 +34,6 @@
   - name: convert template
     template:
      src: ./temp.json.j2
-     dest: /root/temp.json
+     dest: /app1/temp.json
     delegate_to: localhost
 

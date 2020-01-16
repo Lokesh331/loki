@@ -1,0 +1,39 @@
+---
+- name: create json 
+  hosts: localhost
+  vars:
+  # server_list: ['10.171.170.38']
+   id_list: []
+   ipaddress: []
+   oskernel: []
+   hostname: []
+   macaddress: []
+   cpucount: []
+   totalmem: []
+   freemem: []
+   usedmem: []
+   totalswap: []
+   freeswap: []
+   usedswap: []
+   userslist: []
+   cpuidle: []
+   passwordexpire: []
+  tasks:
+
+  - debug: var=groups['production']
+
+  - set_fact: 
+     server_list: "{{groups['production']}}"
+
+  - name: include playbooks
+    include: find_details.yml
+    with_items:
+    - "{{ groups['production']}}"
+
+  - debug: 
+     var: id_list
+  - name: convert template
+    template:
+     src: ./temp.json.j2
+     dest: ./temp.json
+

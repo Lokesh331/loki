@@ -1,0 +1,29 @@
+{
+{% set count = 0 %}
+{% for i in server_list %}
+"{{i}}": {
+"hostname": "{{hostname[count]}}",
+"kernel_version": "{{oskernel[count]}}",
+"ipaddress": "{{ipaddress[count]}}",
+"macaddress": "{{macaddress[count]}}",
+"cpucount": "{{cpucount[count]}}",
+"cpuidle": "{{cpuidle[count]}}",
+"total_memory": {{totalmem[count]}},
+"used_memory": {{usedmem[count]}},
+"free_memory": {{freemem[count]}},
+"total_swap": {{totalswap[count]}},
+"used_swap": {{usedswap[count]}},
+"free_swap": {{freeswap[count]}},
+
+
+"disk": {
+{% for j in id_list[count].stdout_lines %}
+"{{j.split(',').0}}": "{{ j.split(',').1}}"{% if j != id_list[count].stdout_lines|last %},{% endif %}
+{#"{{j.split(',').0}}": "{{ j.split(',').1}}" : "{{ j.split(',').2}}": "{{ j.split(',').3}}": "{{ j.split(',').4}}": "{{ j.split(',').5}}"{% if j != id_list[count].stdout_lines|last %},{% endif %}#}
+{% endfor %}
+}
+}
+{% set count = count + 1 %}
+{% if i != server_list|last %},{% endif %}
+{% endfor %}
+}

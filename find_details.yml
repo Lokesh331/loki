@@ -1,0 +1,33 @@
+---
+
+- name: setup module
+  setup:
+  register: output
+  delegate_to: "{{item}}"
+
+- debug: var=output.ansible_facts.ansible_default_ipv4.address
+- set_fact:
+   ipaddress: "{{ ipaddress + [output.ansible_facts.ansible_default_ipv4.address] }}"
+   macaddress: "{{ macaddress + [output.ansible_facts.ansible_default_ipv4.macaddress] }}"
+   hostname: "{{ hostname + [output.ansible_facts.ansible_hostname] }}"
+   cpucount: "{{ cpucount + [output.ansible_facts.ansible_processor_vcpus] }}"
+   totalmem: "{{ totalmem + [output.ansible_facts.ansible_memory_mb.real.total] }}"
+   usedmem: "{{ usedmem + [output.ansible_facts.ansible_memory_mb.real.used] }}"
+   freemem: "{{ freemem + [output.ansible_facts.ansible_memory_mb.real.free] }}"
+   totalswap: "{{ totalswap + [output.ansible_facts.ansible_memory_mb.swap.total] }}"
+   freeswap: "{{ freeswap + [output.ansible_facts.ansible_memory_mb.swap.free] }}"
+   usedswap: "{{ usedswap + [output.ansible_facts.ansible_memory_mb.swap.used] }}"
+   oskernel: "{{ oskernel + [output.ansible_facts.ansible_kernel]}}"
+
+- name: get the file detais
+  shell: df -h | egrep -v "tmpfs|Filesystem" |awk ' { print $1 "," $2 "," $3 "," $4 "," $5 "," $6}'
+  register: fileout
+  delegate_to: "{{item}}"
+- name: Get CPU usage
+  shell: "top -b -n 1"
+  register: top
+  
+- name: Set Fact vm id's to array
+  set_fact:
+   id_list: "{{ id_list + [ fileout ] }}"
+   cpuidle: "{{ cpuidle + [top.stdout_lines[2].split(',')[3]]}}"

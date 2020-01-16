@@ -35,4 +35,5 @@
     template:
      src: ./temp.json.j2
      dest: ./temp.json
+    delegate_to: localhost
 

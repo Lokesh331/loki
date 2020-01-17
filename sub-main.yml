@@ -1,0 +1,38 @@
+---
+- name: create json 
+  hosts: localhost
+  vars:
+   id_list: []
+   ipaddress: []
+   oskernel: []
+   hostname: []
+   macaddress: []
+   cpucount: []
+   totalmem: []
+   freemem: []
+   usedmem: []
+   totalswap: []
+   freeswap: []
+   usedswap: []
+   userslist: []
+   cpuidle: []
+   passwordexpire: []
+  tasks:
+
+  - debug: var=ANSIBLE_STDOUT_CALLBACK
+
+  - set_fact: 
+     server_list: "{{groups['production']}}"
+
+  - name: include playbooks
+    include: find_details.yml
+    with_items:
+    - "{{ groups['production']}}"
+
+  - debug: 
+     var: id_list
+  - name: convert template
+    template:
+     src: ./temp.json.j2
+     dest: /app1/temp.json
+    delegate_to: localhost

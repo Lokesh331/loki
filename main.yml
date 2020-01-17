@@ -19,7 +19,7 @@
    passwordexpire: []
   tasks:
 
-  - debug: var=groups['production']
+  - debug: var=ANSIBLE_STDOUT_CALLBACK
 
   - set_fact: 
      server_list: "{{groups['production']}}"

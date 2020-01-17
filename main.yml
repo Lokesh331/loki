@@ -4,4 +4,4 @@
   
   tasks:
   - name: convert template
-    shell: ANSIBLE_STDOUT_CALLBACK=json ansible-playbook create_json.yml >/app/temp.json
+    shell: ANSIBLE_STDOUT_CALLBACK=json ansible-playbook sub-main.yml>/app/temp.json

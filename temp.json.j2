@@ -16,7 +16,7 @@
 "free_swap": "{{freeswap[count]}}",
 
 
-"disk_available_space": {
+"disk_free_space": {
 {% for j in id_list[count].stdout_lines %}
 "{{j.split(',').0}}": "{{ j.split(',').3}}"{% if j != id_list[count].stdout_lines|last %},{% endif %}
 {% endfor %}

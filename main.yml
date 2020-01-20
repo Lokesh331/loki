@@ -1,5 +1,6 @@
 ---
 - name: create json 
+  become: yes
   hosts: localhost
   vars:
    id_list: []

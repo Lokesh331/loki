@@ -23,10 +23,12 @@
 - name : user password expired
   shell: "for user1 in $(cat /etc/passwd |cut -d: -f1); do expiry=$(chage -l $user1 | fgrep 'Password expires'); if ! echo $expiry | fgrep -q never; then echo -e $user1 \t $expiry; fi; done | column -t"
   register: passexpire1
+  become: yes
   delegate_to: "{{item}}"
 - name: password expire checking
   shell: "for user2 in $(cat /etc/passwd |cut -d: -f1); do echo -en $user2':';chage -l $user2 | fgrep 'Password expires';done"
   register: passexpire
+  become: yes
   delegate_to: "{{item}}"
 - name: top CPU usage process
   shell: "ps -eo pid,ppid,cmd,%cpu --sort=-%cpu | head"
@@ -39,25 +41,30 @@
 - name: check services running
   shell: systemctl list-units --type service | egrep -v "LOAD|--all|=|To"
   register: servicesout
+  become: yes
   delegate_to: "{{item}}"
 - name: pvs
   shell: pvs
   register: pvsout
+  become: yes
   ignore_errors: yes
   delegate_to: "{{item}}"
 - name: vgs
   shell: vgs
+  become: yes
   register: vgsout
   ignore_errors: yes
   delegate_to: "{{item}}"
 - name: lvs
   shell: lvs
   register: lvsout
+  become: yes
   ignore_errors: yes
   delegate_to: "{{item}}"
 - name: ifconfig
   shell: ip a
   register: ifconfigout
+  become: yes
   ignore_errors: yes
   delegate_to: "{{item}}"
 - name: ping
@@ -66,6 +73,7 @@
   ignore_errors: yes
 - name: ports listening
   shell: netstat -plantu
+  become: yes
   register: portsout
   delegate_to: "{{item}}"
 

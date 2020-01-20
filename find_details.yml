@@ -70,7 +70,6 @@
 - name: ping
   shell: ping -c 1 "{{item}}"
   register: pingout
-  become: yes
   ignore_errors: yes
 - name: ports listening
   shell: netstat -plantu

@@ -68,7 +68,9 @@
   ignore_errors: yes
   delegate_to: "{{item}}"
 - name: ping
-  shell: ping -c 1 "{{item}}"
+#  shell: ping -c 1 "{{item}}"
+  ping:
+  delegate_to: "{{item}}"
   register: pingout
   ignore_errors: yes
 

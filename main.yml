@@ -46,3 +46,6 @@
      src: ./temp.json.j2
      dest: /app1/temp.json
     delegate_to: localhost
+    
+  - name: copy the output to server
+    shell: scp /app1/temp.json 172.31.9.76:/app1/

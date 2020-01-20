@@ -1,7 +1,6 @@
 ---
 - name: create json 
   become: yes
-  method: sudo
   hosts: localhost
   vars:
    id_list: []

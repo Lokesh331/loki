@@ -2,7 +2,6 @@
 - name: create json 
   hosts: localhost
   vars:
-  # server_list: ['10.171.170.38']
    id_list: []
    ipaddress: []
    oskernel: []
@@ -15,13 +14,25 @@
    totalswap: []
    freeswap: []
    usedswap: []
-   userslist: []
    cpuidle: []
+   dirpath: /
+   lsoutput: []
+   hostsfile: []
+   userslist: []
+   activeusers: []
+   passexpired1: []
    passwordexpire: []
+   topcpu: []
+   topmem: []
+   servicerunning: []
+   lvs1: []
+   vgs1: []
+   pvs1: []
+   ifconfig1: []
+   pingres: []
+   portslis: []
+
   tasks:
-
-  - debug: var=groups['production']
-
   - set_fact: 
      server_list: "{{groups['production']}}"
 
@@ -30,8 +41,6 @@
     with_items:
     - "{{ groups['production']}}"
 
-  - debug: 
-     var: id_list
   - name: convert template
     template:
      src: ./temp.json.j2

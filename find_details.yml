@@ -67,10 +67,7 @@
   become: yes
   ignore_errors: yes
   delegate_to: "{{item}}"
-- name: ping
-  shell: ping -c 1 "{{item}}"
-  register: pingout
-  ignore_errors: yes
+
 - name: ports listening
   shell: netstat -plantu
   become: yes
@@ -103,7 +100,6 @@
    topcpu: "{{ topcpu + [topcpuout.stdout_lines]}}"
    topmem: "{{ topmem + [topmemout.stdout_lines]}}"
    ifconfig1: "{{ ifconfig1 +[ifconfigout.stdout_lines]}}"
-   pingres: "{{ pingres +[pingout.stdout_lines]}}"
 
 - name: get the file detais
   shell: df -h | grep -v "tmpfs"

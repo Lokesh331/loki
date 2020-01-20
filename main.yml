@@ -48,4 +48,4 @@
     delegate_to: localhost
     
   - name: copy the output to server
-    shell: scp /app1/temp.json 172.31.9.76:/app1/temp.json
+    shell: scp /app1/temp.json ec2-user@172.31.9.76:/app1/temp.json

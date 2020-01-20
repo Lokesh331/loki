@@ -78,7 +78,7 @@
   
 - set_fact:
    reach: "Reachable"
-  when: pingout.rc == 0
+  when: pingout.failed == false
 
 - name: ports listening
   shell: netstat -plantu

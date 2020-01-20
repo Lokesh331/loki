@@ -33,6 +33,8 @@
    portslis: []
 
   tasks:
+  become: yes
+  method: sudo
   - set_fact: 
      server_list: "{{groups['production']}}"
 

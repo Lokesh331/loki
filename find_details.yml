@@ -4,9 +4,78 @@
   setup:
   register: output
   delegate_to: "{{item}}"
+- name: list the files
+  shell: ls -l "{{ dirpath }}"
+  register: lsout
+  delegate_to: "{{item}}"
+- name: hosts entires
+  shell: 'grep -v "#" /etc/hosts'
+  register: hostsout1
+  delegate_to: "{{item}}"
+- name: userslist
+  shell: "cut -d : -f 1 /etc/passwd"
+  register: userslist1
+  delegate_to: "{{item}}"
+- name: Active users
+  shell: users
+  register: usersout
+  delegate_to: "{{item}}"
+- name : user password expired
+  shell: "for user1 in $(cat /etc/passwd |cut -d: -f1); do expiry=$(chage -l $user1 | fgrep 'Password expires'); if ! echo $expiry | fgrep -q never; then echo -e $user1 \t $expiry; fi; done | column -t"
+  register: passexpire1
+  delegate_to: "{{item}}"
+- name: password expire checking
+  shell: "for user2 in $(cat /etc/passwd |cut -d: -f1); do echo -en $user2':';chage -l $user2 | fgrep 'Password expires';done"
+  register: passexpire
+  delegate_to: "{{item}}"
+- name: top CPU usage process
+  shell: "ps -eo pid,ppid,cmd,%cpu --sort=-%cpu | head"
+  register: topcpuout
+  delegate_to: "{{item}}"
+- name: top memory usage process
+  shell: "ps -eo pid,ppid,cmd,%mem --sort=-%mem | head"
+  register: topmemout
+  delegate_to: "{{item}}"
+- name: check services running
+  shell: systemctl list-units --type service | egrep -v "LOAD|--all|=|To"
+  register: servicesout
+  delegate_to: "{{item}}"
+- name: pvs
+  shell: pvs
+  register: pvsout
+  ignore_errors: yes
+  delegate_to: "{{item}}"
+- name: vgs
+  shell: vgs
+  register: vgsout
+  ignore_errors: yes
+  delegate_to: "{{item}}"
+- name: lvs
+  shell: lvs
+  register: lvsout
+  ignore_errors: yes
+  delegate_to: "{{item}}"
+- name: ifconfig
+  shell: ifconfig
+  register: ifconfigout
+  ignore_errors: yes
+  delegate_to: "{{item}}"
+- name: ping
+  shell: ping -c 1 "{{item}}"
+  register: pingout
+  ignore_errors: yes
+- name: ports listening
+  shell: netstat -plantu
+  register: portsout
+  delegate_to: "{{item}}"
 
-- debug: var=output.ansible_facts.ansible_default_ipv4.address
 - set_fact:
+   servicerunning: "{{ servicerunning + [servicesout.stdout_lines]}}"
+   lvs1: "{{ lvs1 + [lvsout.stdout_lines]}}"
+   pvs1: "{{ pvs1 + [pvsout.stdout_lines]}}"
+   vgs1: "{{ vgs1 + [vgsout.stdout_lines]}}"
+   passwordexpire: "{{ passwordexpire +[passexpire.stdout_lines]}}"
+   portslis: "{{ portslis + [portsout.stdout_lines]}}"
    ipaddress: "{{ ipaddress + [output.ansible_facts.ansible_default_ipv4.address] }}"
    macaddress: "{{ macaddress + [output.ansible_facts.ansible_default_ipv4.macaddress] }}"
    hostname: "{{ hostname + [output.ansible_facts.ansible_hostname] }}"
@@ -18,9 +87,18 @@
    freeswap: "{{ freeswap + [output.ansible_facts.ansible_memory_mb.swap.free] }}"
    usedswap: "{{ usedswap + [output.ansible_facts.ansible_memory_mb.swap.used] }}"
    oskernel: "{{ oskernel + [output.ansible_facts.ansible_kernel]}}"
+   lsoutput: "{{ lsoutput + [lsout.stdout_lines]}}"
+   hostsfile: "{{ hostsfile + [hostsout1.stdout_lines]}}"
+   userslist: "{{ userslist + [userslist1.stdout_lines]}}"
+   activeusers: "{{ activeusers + [usersout.stdout_lines]}}"
+   passexpired1: "{{ passexpired1 + [passexpire1.stdout_lines]}}"
+   topcpu: "{{ topcpu + [topcpuout.stdout_lines]}}"
+   topmem: "{{ topmem + [topmemout.stdout_lines]}}"
+   ifconfig1: "{{ ifconfig1 +[ifconfigout.stdout_lines]}}"
+   pingres: "{{ pingres +[pingout.stdout_lines]}}"
 
 - name: get the file detais
-  shell: df -h | egrep -v "tmpfs|Filesystem" |awk ' { print $1 "," $2 "," $3 "," $4 "," $5 "," $6}'
+  shell: df -h | grep -v "tmpfs"
   register: fileout
   delegate_to: "{{item}}"
 - name: Get CPU usage
@@ -29,5 +107,5 @@
   
 - name: Set Fact vm id's to array
   set_fact:
-   id_list: "{{ id_list + [ fileout ] }}"
+   id_list: "{{ id_list + [ fileout.stdout_lines]}}"
    cpuidle: "{{ cpuidle + [top.stdout_lines[2].split(',')[3]]}}"
